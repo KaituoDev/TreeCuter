@@ -39,6 +39,7 @@ public class TreeCuterCommand implements CommandExecutor, TabCompleter {
 
         sender.sendMessage(ChatUtils.format(Settings.getReloadStart()));
         Settings.loadConfig(true);
+        ToggleService.loadPlayerData();
         sender.sendMessage(ChatUtils.format(Settings.getReloadEnd()));
     }
 

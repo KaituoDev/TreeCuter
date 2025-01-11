@@ -1,5 +1,7 @@
 package pl.norbit.treecuter.service;
 
+import pl.norbit.treecuter.config.Settings;
+
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -33,5 +35,26 @@ public class ToggleService  {
         toggleMap.put(playerUUID, !toggle);
 
         return !toggle;
+    }
+
+    /**
+     * Load player data from config
+     * Should be called after calling Settings.loadConfig()
+     */
+    public static void loadPlayerData() {
+        for (UUID uuid: Settings.getPlayerData().keySet()) {
+            toggleMap.put(uuid, Settings.getPlayerData().get(uuid));
+        }
+    }
+
+
+    /**
+     * Save player data to config
+     * Should be called before calling Settings.saveConfig()
+     */
+    public static void savePlayerData() {
+        for (UUID uuid: toggleMap.keySet()) {
+            Settings.getPlayerData().put(uuid, toggleMap.get(uuid));
+        }
     }
 }

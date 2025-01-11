@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import pl.norbit.treecuter.TreeCuter;
+import pl.norbit.treecuter.service.ToggleService;
 import pl.norbit.treecuter.service.TreePlanterService;
 
 import java.util.*;
@@ -115,6 +118,9 @@ public class Settings {
 
     private static List<Material> groundBlocks;
 
+    @Getter
+    private static HashMap<UUID, Boolean> playerData;
+
     private Settings() {
         throw new IllegalStateException("This class cannot be instantiated");
     }
@@ -180,6 +186,8 @@ public class Settings {
         acceptLeavesBlocks = new ArrayList<>();
         autoPlantSapling = new ArrayList<>();
 
+        playerData = new HashMap<>();
+
         config.getStringList("accept-tools")
                 .stream()
                 .map(Material::getMaterial)
@@ -234,5 +242,23 @@ public class Settings {
 
         if(autoPlant) TreePlanterService.start();
         else TreePlanterService.stop();
+
+        ConfigurationSection playerDataConfig = (ConfigurationSection) config.get("player-data");
+        if (playerDataConfig != null) {
+            HashSet<String> playerDataConfigKeys = new HashSet<>(playerDataConfig.getKeys(false));
+
+            for (String uuidString: playerDataConfigKeys) {
+                boolean playerToggleState = playerDataConfig.getBoolean(uuidString);
+                playerData.put(UUID.fromString(uuidString), playerToggleState);
+            }
+        }
+    }
+
+    public static void saveConfig() {
+        TreeCuter plugin = TreeCuter.getInstance();
+        for (UUID uuid: playerData.keySet()) {
+            plugin.getConfig().set("player-data." + uuid.toString(), playerData.get(uuid));
+        }
+        plugin.saveConfig();
     }
 }

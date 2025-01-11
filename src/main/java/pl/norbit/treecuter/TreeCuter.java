@@ -14,6 +14,7 @@ import pl.norbit.treecuter.listeners.UnglowListener;
 import pl.norbit.treecuter.placeholders.PlaceholderRegistry;
 import pl.norbit.treecuter.service.EffectService;
 import pl.norbit.treecuter.service.LeafDecayService;
+import pl.norbit.treecuter.service.ToggleService;
 import pl.norbit.treecuter.service.TreeCutService;
 import pl.norbit.treecuter.utils.GlowUtils;
 
@@ -32,6 +33,7 @@ public final class TreeCuter extends JavaPlugin {
         EffectService.start();
         TreeCutService.start();
         LeafDecayService.start();
+        ToggleService.loadPlayerData();
 
         infoMessage();
         checkPlugins();
@@ -41,6 +43,12 @@ public final class TreeCuter extends JavaPlugin {
         registerPapi();
 
         loadBStats();
+    }
+
+    @Override
+    public void onDisable() {
+        ToggleService.savePlayerData();
+        Settings.saveConfig();
     }
 
     private void registerCommand(){
